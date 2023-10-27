@@ -12,18 +12,18 @@ from decimal import Decimal
 from boto3.dynamodb.conditions import Attr
 
 # Specify the directory paths
-current_directory = os.getcwd()
+# current_directory = os.getcwd()
 
-print(current_directory)
+# print(current_directory)
 
-# video_directory =  os.path.join(current_directory, "video")
-video_directory =  current_directory + "/video/"
+# # video_directory =  os.path.join(current_directory, "video")
+# video_directory =  current_directory + "/video/"
 
-images_directory = current_directory + "/images/"
+# images_directory = current_directory + "/images/"
 
-# Create the directories if they don't exist
-os.makedirs(video_directory, exist_ok=True)
-os.makedirs(images_directory, exist_ok=True)
+# # Create the directories if they don't exist
+# os.makedirs(video_directory, exist_ok=True)
+# os.makedirs(images_directory, exist_ok=True)
 
 s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
