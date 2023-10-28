@@ -14,9 +14,6 @@ from boto3.dynamodb.conditions import Attr
 # Specify the directory paths
 current_directory = os.getcwd()
 
-print(current_directory)
-
-# video_directory =  os.path.join(current_directory, "video")
 video_directory =  current_directory + "/video/"
 
 images_directory = current_directory + "/images/"
@@ -109,15 +106,53 @@ def create_csv_file(object_key, record):
     os.remove(filepath)  
     # return filename  
 
-
-
 def face_recognition_handler(event, context):    
 # def face_recognition_handler():    
+    '''
+    # exaple for event data
+    event = 
+    {
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-east-1",
+            "eventTime": "2023-10-27T06:33:59.544Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AIDAZYSJTIT5THD7UDHZE"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "72.196.86.50"
+            },
+            "responseElements": {
+                "x-amz-request-id": "6Q24XTFJ3A3BJ2CJ",
+                "x-amz-id-2": "cY12aIow+yMlDa5RZlqkrn8h1WkSmHmD8TS6Stw1LjEUB026g1qpbwwUJmUS/C5mgXAKj9q1y0FsScmOoVBYRnfH5jPSsPlf"
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "069d492b-28b9-43a1-aaa7-1aa32edc6a51",
+                "bucket": {
+                    "name": "paas-input-bucket-videos",
+                    "ownerIdentity": {
+                        "principalId": "AZ2PS6I7DNYSV"
+                    },
+                    "arn": "arn:aws:s3:::paas-input-bucket-videos"
+                },
+                "object": {
+                    "key": "test_5.mp4",
+                    "size": 1719624,
+                    "eTag": "e4af7894fcd0a4ad49c88fb8e7413f79",
+                    "sequencer": "00653B59D763ED466C"
+                }
+            }
+        }
+    ]
+}
+    '''
     bucket = event['Records'][0]['s3']['bucket']['name']
     object_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
 
-    # bucket = input_bucket_name
-    # object_key = "test_7.mp4"
     try : 
         download_video_from_s3(bucket, object_key, video_directory)
 
@@ -132,21 +167,3 @@ def face_recognition_handler(event, context):
     except Exception as e :
         print(e)
         raise e
-
-
-def main():
-
-    # download_video_from_s3(input_bucket_name, object_key, input_path)
-
-    # extract_images_from_video(input_path + 'test_1.mp4', images_path)
-    
-    # target_name = process_image(images_path+"image-002.jpeg")
-
-    # result = get_target_from_dynamodb(target_name)
-
-    # create_csv_file(result)
-
-    face_recognition_handler()
-
-if __name__ == "__main__":
-    main()
