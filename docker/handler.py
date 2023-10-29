@@ -1,10 +1,11 @@
+# Import necessary modules
 from fileinput import filename
 from boto3 import client as boto3_client
 import face_recognition
 import pickle
 import urllib.parse
 import boto3
-import botocore
+# import botocore
 import os
 import ffmpeg
 import csv
@@ -13,29 +14,25 @@ from boto3.dynamodb.conditions import Attr
 
 # Specify the directory paths
 current_directory = os.getcwd()
-
 video_directory =  current_directory + "/video/"
-
 images_directory = current_directory + "/images/"
 
 # Create the directories if they don't exist
 os.makedirs(video_directory, exist_ok=True)
 os.makedirs(images_directory, exist_ok=True)
 
+# Initialize AWS services
 s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
 
+# Set the DynamoDB table name
 table_name = 'Student-academic-records'
 table = dynamodb.Table(table_name)
 
 
 # Constants for your S3 bucket and object
-input_bucket_name = 'paas-input-bucket-videos'
-output_bucket_name = 'paas-output-bucket-results'
-object_key = 'video.mp4'
-input_path = '/Users/premkumaramanchi/CODE/DEV/CSE546-PaaS/AWS/'
-images_path = '/Users/premkumaramanchi/CODE/DEV/CSE546-PaaS/AWS/output/'
-encoding_file_path = '/Users/premkumaramanchi/CODE/DEV/CSE546-PaaS/docker/encoding.dat'
+output_bucket_name = 'cse546-paas-output-bucket-results'
+encoding_file_path = current_directory + "/encoding.dat"
 
 # Function to download the video from S3
 def download_video_from_s3(bucket_name, object_key, destination_path):
@@ -58,7 +55,6 @@ def extract_images_from_video(video_path, image_output_path):
 
 # Process image and return result
 def process_image(img_path):
-
     image_files = face_recognition.load_image_file(img_path)
     image_file_encoding = face_recognition.face_encodings(image_files)[0]
 
@@ -74,6 +70,7 @@ def process_image(img_path):
             index = result.index(ans)
             return (known_names[index])
 
+# Function to retrieve data from DynamoDB
 def get_target_from_dynamodb(name):
         try:
             response = table.scan(FilterExpression=Attr('name').eq(name))
@@ -84,18 +81,23 @@ def get_target_from_dynamodb(name):
             print(f"An error occurred while querying the table: {e}")
         return None
 
+# Function to create a CSV file
 def create_csv_file(object_key, record):
     
     print("creating csv file")
-    
+
+    # Define the CSV file path
     filename = object_key + record["name"] + ".csv"
-    filepath = '/tmp/' + object_key + filename
+    filepath = current_directory+ '/' + object_key + filename
+
+    # Write data to the CSV file
     with open(filepath, 'w') as csvfile: 
         filewriter = csv.writer(csvfile, delimiter=',',
                             quoting=csv.QUOTE_MINIMAL)               
         filewriter.writerow(['Name','Major','Year'])
         filewriter.writerow([record['name'], record['major'], record['year']])
 
+    # Upload the CSV file to the output S3 bucket
     print("upload file started")
     s3.upload_file(
                     Bucket = output_bucket_name,
@@ -106,15 +108,16 @@ def create_csv_file(object_key, record):
     os.remove(filepath)  
     # return filename  
 
-def face_recognition_handler(event, context):    
-# def face_recognition_handler():    
+
+# Lambda function for processing facial recognition
+def face_recognition_handler(event, context):      
     '''
-    # exaple for event data
+    # example for event data
     event = 
     {
     "Records": [
         {
-            "eventVersion": "2.1",
+            "eventVersion": "2.1", 
             "eventSource": "aws:s3",
             "awsRegion": "us-east-1",
             "eventTime": "2023-10-27T06:33:59.544Z",
