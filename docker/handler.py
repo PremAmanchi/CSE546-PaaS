@@ -14,8 +14,8 @@ from boto3.dynamodb.conditions import Attr
 
 # Specify the directory paths
 current_directory = os.getcwd()
-video_directory =  current_directory + "/video/"
-images_directory = current_directory + "/images/"
+video_directory =  "/tmp/video/"
+images_directory = "/tmp/images/"
 
 # Create the directories if they don't exist
 os.makedirs(video_directory, exist_ok=True)
@@ -32,7 +32,7 @@ table = dynamodb.Table(table_name)
 
 # Constants for your S3 bucket and object
 output_bucket_name = 'cse546-paas-output-bucket-results'
-encoding_file_path = current_directory + "/encoding.dat"
+encoding_file_path = current_directory + "/docker/encoding.dat"
 
 # Function to download the video from S3
 def download_video_from_s3(bucket_name, object_key, destination_path):
@@ -98,7 +98,7 @@ def create_csv_file(object_key, record):
     # Define the CSV file path
     print(record["name"])
     filename = object_key +"_"+ record["name"] + ".csv"
-    filepath = current_directory+ '/' + object_key + filename
+    filepath =  '/tmp/' + object_key + filename
 
     # Write data to the CSV file
     with open(filepath, 'w') as csvfile: 
@@ -121,8 +121,8 @@ def create_csv_file(object_key, record):
 
 
 # Lambda function for processing facial recognition
-# def face_recognition_handler(event, context):   
-def face_recognition_handler(bucket, object_key):   
+def face_recognition_handler(event, context):   
+# def face_recognition_handler(bucket, object_key):   
    
     '''
     # example for event data
@@ -166,15 +166,15 @@ def face_recognition_handler(bucket, object_key):
     ]
 }
     '''
-    # bucket = event['Records'][0]['s3']['bucket']['name']
-    # object_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    object_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
 
     try : 
         download_video_from_s3(bucket, object_key, video_directory)
 
         extract_images_from_video(video_directory + object_key, images_directory)
     
-        target_name = process_image(images_directory+ "image-002.jpeg")
+        target_name = process_image(images_directory+ "image-001.jpeg")
 
         result = get_target_from_dynamodb(target_name)
 
@@ -184,4 +184,4 @@ def face_recognition_handler(bucket, object_key):
         print(e)
         raise e
 
-face_recognition_handler("case546-paas-input-bucket-videos", "test_0.mp4")
+# face_recognition_handler("case546-paas-input-bucket-videos", "test_0.mp4")

@@ -4,4 +4,3 @@ if [ -z "${AWS_LAMBDA_RUNTIME_API}" ]; then
 else
     exec /usr/local/bin/python -m awslambdaric $1
 fi
-

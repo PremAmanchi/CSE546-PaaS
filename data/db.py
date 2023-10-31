@@ -1,76 +1,21 @@
 import boto3
+import json
 
-# Define your data
-data = [
-    {
-        "id": 1,
-        "name": "mr_bean",
-        "major": "lawyer",
-        "year": "freshman"
-    },
-    {
-        "id": 2,
-        "name": "president_biden",
-        "major": "history",
-        "year": "sophomore"
-    },
-    {
-        "id": 3,
-        "name": "vin_diesel",
-        "major": "computer_science",
-        "year": "sophomore"
-    },
-    {
-        "id": 4,
-        "name": "floki",
-        "major": "history",
-        "year": "junior"
-    },
-    {
-        "id": 5,
-        "name": "president_trump",
-        "major": "physics",
-        "year": "junior"
-    },
-    {
-        "id": 6,
-        "name": "morgan_freeman",
-        "major": "math",
-        "year": "senior"
-    },
-    {
-        "id": 7,
-        "name": "president_obama",
-        "major": "electrical_engineering",
-        "year": "senior"
-    },
-    {
-        "id": 8,
-        "name": "johnny_dep",
-        "major": "computer_science",
-        "year": "senior"
-    }
-]
-
-# Initialize the DynamoDB client
-dynamodb = boto3.client('dynamodb')
-
-# Specify the name of your DynamoDB table
+# Replace 'your_table_name' with the name of your DynamoDB table
 table_name = 'student-academic-records'
 
-# Iterate through the data and put items into the DynamoDB table
-for item in data:
-    response = dynamodb.put_item(
-        TableName=table_name,
-        Item={
-            'id': {'N': str(item['id'])},
-            'name': {'S': item['name']},
-            'major': {'S': item['major']},
-            'year': {'S': item['year']}
-        }
-    )
+# Create a DynamoDB resource
+dynamodb = boto3.resource('dynamodb')
 
-    # Print the response to verify the operation was successful
-    print(f"Uploaded item {item['id']} - {item['name']}")
+# Read the JSON file
+with open('/Users/premkumaramanchi/CODE/DEV/CSE546-PaaS/data/student_data.json') as f:
+    data = json.load(f)
 
-print("Data upload completed.")
+# Get the DynamoDB table
+table = dynamodb.Table(table_name)
+
+# Upload each item in the JSON file to the DynamoDB table
+with table.batch_writer() as batch:
+    for item in data:
+        batch.put_item(Item=item)
+        print("Inserted item")
