@@ -32,34 +32,34 @@ table = dynamodb.Table(table_name)
 
 # Constants for your S3 bucket and object
 output_bucket_name = 'cse546-paas-output-bucket-results'
-encoding_file_path = current_directory + "/docker/encoding.dat"
+encoding_file_path = current_directory + "/encoding.dat"
 
 # Function to download the video from S3
 def download_video_from_s3(bucket_name, object_key, destination_path):
-    print("================================================================ download image ")
+    print("================================================================ start download_video_from_s3 ")
     try:
         response = s3.get_object(Bucket=bucket_name, Key=object_key)
         data = response['Body'].read()
         with open(destination_path + object_key, 'wb') as f:
             f.write(data)
         s3.delete_object(Bucket=bucket_name, Key=object_key)
-        print("*************************************************************** done download image ")
+        print("*************************************************************** done download_video_from_s3 ")
     except Exception as e:
         print(f'Error while downloading video from S3: {e}')
 
 # Function to extract images from the video
 def extract_images_from_video(video_path, image_output_path):
-    print("================================================================ download extract_images_from_video ")
+    print("================================================================ start extract_images_from_video ")
     try:
         os.system(f"ffmpeg -i {video_path} -r 1 {image_output_path}image-%3d.jpeg")
-        print("*************************************************************** done download extract_images_from_video ")
+        print("*************************************************************** done extract_images_from_video ")
     except Exception as e:
         print(f'Error while extracting images: {e}')
 
 
 # Process image and return result
 def process_image(img_path):
-    print("================================================================ download process_image ")
+    print("================================================================ start process_image ")
     image_files = face_recognition.load_image_file(img_path)
     image_file_encoding = face_recognition.face_encodings(image_files)[0]
 
@@ -73,18 +73,18 @@ def process_image(img_path):
     for ans in result:
         if ans:
             index = result.index(ans)
-            print("*************************************************************** done download process_image ")
+            print("*************************************************************** done process_image ")
             return (known_names[index])
     
 
 # Function to retrieve data from DynamoDB
 def get_target_from_dynamodb(name):
-        print("================================================================ download get_target_from_dynamodb ")       
+        print("================================================================ start get_target_from_dynamodb ")       
         try:
             response = table.scan(FilterExpression=Attr('name').eq(name))
             items = response.get('Items', [])
             if items:
-                print("*************************************************************** done download get_target_from_dynamodb ")
+                print("*************************************************************** done get_target_from_dynamodb ")
                 return items[0]  # Assuming name is unique, so we return the first match
         except Exception as e:
             print(f"An error occurred while querying the table: {e}")
@@ -92,7 +92,7 @@ def get_target_from_dynamodb(name):
 
 # Function to create a CSV file
 def create_csv_file(object_key, record):
-    print("================================================================ download create_csv_file ")
+    print("================================================================ start create_csv_file ")
     print("creating csv file")
     print(record)
     # Define the CSV file path
@@ -116,14 +116,31 @@ def create_csv_file(object_key, record):
                 )  
     print("upload file completed")      
     os.remove(filepath)
-    print("*************************************************************** done download create_csv_file ")
+    print("*************************************************************** done create_csv_file ")
     # return filename  
 
 
 # Lambda function for processing facial recognition
 def face_recognition_handler(event, context):   
-# def face_recognition_handler(bucket, object_key):   
-   
+
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    object_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+
+    try : 
+        download_video_from_s3(bucket, object_key, video_directory)
+
+        extract_images_from_video(video_directory + object_key, images_directory)
+    
+        target_name = process_image(images_directory+ "image-001.jpeg")
+
+        result = get_target_from_dynamodb(target_name)
+
+        create_csv_file(object_key, result)
+
+    except Exception as e :
+        print(e)
+        raise e
+
     '''
     # example for event data
     event = 
@@ -166,22 +183,3 @@ def face_recognition_handler(event, context):
     ]
 }
     '''
-    bucket = event['Records'][0]['s3']['bucket']['name']
-    object_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-
-    try : 
-        download_video_from_s3(bucket, object_key, video_directory)
-
-        extract_images_from_video(video_directory + object_key, images_directory)
-    
-        target_name = process_image(images_directory+ "image-001.jpeg")
-
-        result = get_target_from_dynamodb(target_name)
-
-        create_csv_file(object_key, result)
-
-    except Exception as e :
-        print(e)
-        raise e
-
-# face_recognition_handler("case546-paas-input-bucket-videos", "test_0.mp4")

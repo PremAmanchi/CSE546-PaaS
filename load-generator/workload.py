@@ -1,9 +1,9 @@
 from boto3 import client as boto3_client
 import os
 
-input_bucket = "546proj2"
-output_bucket = "546proj2output"
-test_cases = "test_cases/"
+input_bucket = "cse546-paas-input-bucket-videos"
+output_bucket = "cse546-paas-output-bucket-results"
+test_cases = "/Users/premkumaramanchi/CODE/DEV/CSE546-PaaS/data/test_cases/"
 
 def clear_input_bucket():
 	global input_bucket
@@ -32,7 +32,6 @@ def upload_to_input_bucket_s3(path, name):
 	s3 = boto3_client('s3')
 	s3.upload_file(path + name, input_bucket, name)
 	
-	
 def upload_files(test_case):	
 	global input_bucket
 	global output_bucket
@@ -52,14 +51,14 @@ def upload_files(test_case):
 	
 def workload_generator():
 	
-	print("Running Test Case 1")
-	upload_files("test_case_1")
+	# print("Running Test Case 1")
+	# upload_files("test_case_1")
 
 	print("Running Test Case 2")
 	upload_files("test_case_2")
 	
 
-# clear_input_bucket()
+clear_input_bucket()
 clear_output_bucket()	
 workload_generator()	
 
