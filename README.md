@@ -61,7 +61,7 @@ The project's code, located in the `handler.py` file, contains the following fun
 To get started, clone the GitHub repository for the project to your local machine using the following terminal command:
 ```bash
 git clone https://github.com/PremAmanchi/CSE546-PaaS
-
+```
 
 ## Building and Pushing Docker Image
 1. Navigate to the "docker" directory within the cloned repository.
