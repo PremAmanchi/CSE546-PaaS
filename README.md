@@ -20,7 +20,7 @@ The project's goal is to leverage AWS Lambda for image recognition within video 
 
 ## Design and Implementation 🛠️
 ### Architecture 🏛️
-![Architecture](architecture.png)
+![Architecture](https://github.com/PremAmanchi/CSE546-PaaS/blob/main/data/PaaS%20Architecture.png?raw=true)
 - Users upload videos to an S3 input bucket.
 - AWS Lambda, containerized within a Docker image, processes the video and extracts frames.
 - Image recognition is performed on the first frame.
