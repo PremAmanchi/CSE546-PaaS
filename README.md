@@ -14,10 +14,10 @@
 3. [Testing and Evaluation](#testing-and-evaluation) 🧪
 4. [Code](#code) 📝
 5. [Setup](#setup) 🚀
-
+<a id="problem-statement"></a>
 ## Problem Statement 🎯
 The project's goal is to leverage AWS Lambda for image recognition within video files. Users initiate the process by uploading video files to the designated S3 input bucket. The Lambda function is triggered, extracting frames from the video and performing image recognition. The recognized images are cross-referenced with student data stored in DynamoDB, and the results are stored in a CSV file in an output S3 bucket. The final output provides educators with insights into their classrooms.
-
+<a id="design-and-implementation"></a>
 ## Design and Implementation 🛠️
 <a id="architecture"></a>
 ### Architecture 🏛️
@@ -27,10 +27,10 @@ The project's goal is to leverage AWS Lambda for image recognition within video 
 - Image recognition is performed on the first frame.
 - Student data is fetched from DynamoDB for matched images.
 - The results are stored as CSV files in an output S3 bucket.
-
+<a id="autoscaling"></a>
 ### AutoScaling ⚖️
 The application utilizes Platform as a Service (PaaS) in conjunction with AWS Lambda for dynamic scaling. AWS manages the auto-scaling, allowing efficient responses to real-time demands.
-
+<a id="member-tasks"></a>
 ### Member Tasks 👥
 - **Prem Kumar Amanchi**
     - Created the face recognition module in handler.py.
@@ -45,10 +45,10 @@ The application utilizes Platform as a Service (PaaS) in conjunction with AWS La
     - Created S3 buckets in AWS for data storage.
     - Assisted in video retrieval and CSV file upload.
     - Created a DynamoDB table to store relevant data.
-
+<a id="testing-and-evaluation"></a>
 ## Testing and Evaluation 🧪
 The application was tested by uploading a single video file to the S3 input bucket. Custom logs were used to monitor the workflow. Additional testing involved using a workload generator to upload test video files.
-
+<a id="code"></a>
 ## Code 📝
 The project's code, located in the `handler.py` file, contains the following functions:
 - `download_video_from_s3`: Downloads a video from an S3 bucket.
@@ -57,7 +57,7 @@ The project's code, located in the `handler.py` file, contains the following fun
 - `get_target_from_dynamodb`: Retrieves data from DynamoDB.
 - `create_csv_file`: Creates a CSV file with academic records.
 - `face_recognition_handler`: The main Lambda function for processing facial recognition.
-
+<a id="setup"></a>
 ## Setup 🚀
 ### Cloning the Repository
 To get started, clone the GitHub repository for the project to your local machine using the following terminal command:
