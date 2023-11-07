@@ -32,9 +32,10 @@ The application utilizes Platform as a Service (PaaS) in conjunction with AWS La
 
 ### Member Tasks 👥
 - **Prem Kumar Amanchi**
-    - Deployed the container image in Lambda.
     - Created the face recognition module in handler.py.
-    - Assigned a role to the Lambda function.
+    - Deployed the container image in Lambda.
+    - Assisted in Building and uploading the Docker image to AWS ECR.
+    - Assigned a roles to the Lambda function.
 - **Manohar Veeravalli**
     - Built and uploaded the Docker image to AWS ECR.
     - Uploaded the dataset into DynamoDB.
