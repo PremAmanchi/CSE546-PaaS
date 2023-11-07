@@ -19,6 +19,7 @@
 The project's goal is to leverage AWS Lambda for image recognition within video files. Users initiate the process by uploading video files to the designated S3 input bucket. The Lambda function is triggered, extracting frames from the video and performing image recognition. The recognized images are cross-referenced with student data stored in DynamoDB, and the results are stored in a CSV file in an output S3 bucket. The final output provides educators with insights into their classrooms.
 
 ## Design and Implementation 🛠️
+<a id="architecture"></a>
 ### Architecture 🏛️
 ![Architecture](https://github.com/PremAmanchi/CSE546-PaaS/blob/main/data/PaaS%20Architecture.png?raw=true)
 - Users upload videos to an S3 input bucket.
