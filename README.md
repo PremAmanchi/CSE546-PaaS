@@ -1,4 +1,4 @@
-# CSE546 PaaS Project Report 📚
+# CSE546 PaaS Project - EduWatch: Smart Classroom Surveillance 📚
 
 ## Team
 - Prem Kumar Amanchi (Email: pamanchi@asu.edu, ASUID: 1224421289) 🧑‍💼
